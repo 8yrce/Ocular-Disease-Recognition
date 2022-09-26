@@ -4,15 +4,13 @@ O_D_Model.py
 Bryce Harrington
 9/23/2022
 """
-import tensorflow as tf
 from keras import Sequential
 from keras.layers import Dense, Conv2D, Dropout, MaxPool2D, Flatten
-from keras.activations import sigmoid
+from keras.activations import sigmoid, relu
 from keras.optimizers import Adam
 from keras.losses import binary_crossentropy
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 
-import numpy as np
 from dataclasses import dataclass
 
 
@@ -34,13 +32,14 @@ class ODModel:
         :sets: self.model ( even though at this stage it's a network )
         """
         self.model = Sequential()
-        self.model.add(Conv2D(input_shape=(512, 512, 3), filters=32, kernel_size=(5, 5), padding='same', activation='relu'))
+        self.model.add(Conv2D(input_shape=(256, 256, 3), filters=32, kernel_size=(5, 5), padding='same', activation=relu))
         self.model.add(MaxPool2D(pool_size=(3, 3), strides=(2, 2)))
-        self.model.add(Conv2D(filters=64, kernel_size=(5, 5), activation='relu'))
+        self.model.add(Conv2D(filters=64, kernel_size=(5, 5), activation=relu))
         self.model.add(MaxPool2D(pool_size=(3, 3), strides=(2, 2)))
         self.model.add(Flatten())
-        self.model.add(Dense(1024, activation='relu'))
-        self.model.add(Dense(8, activation='sigmoid'))
+        self.model.add(Dense(1024, activation=relu))
+        # self.model.add(Dropout(0.5))
+        self.model.add(Dense(8, activation=sigmoid))
 
         self.model.compile(
             optimizer=Adam(),
@@ -57,7 +56,10 @@ class ODModel:
         Train our defined network into a competent model
         :sets: self.model
         """
-        self.history = self.model.fit(train_data[0], train_data[1], validation_data=(val_data[0], val_data[1]), epochs=9999, batch_size=16, callbacks=self.callbacks)
+        self.history = self.model.fit(train_data[0], train_data[1],
+                                      validation_data=(val_data[0], val_data[1]),
+                                      epochs=999, batch_size=4,
+                                      callbacks=self.callbacks)
 
     def inference_model(self):
         """
