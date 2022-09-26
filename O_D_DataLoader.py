@@ -103,7 +103,6 @@ def od_data_loader(data_path: str, labels_path: str, split: list = [0.7, 0.2, 0.
             random.shuffle(labels)
 
         splits = [int(s * len(data)) for s in split]
-        #ps = 0
         for i, s in enumerate(splits):
             split_data.append(data[splits[i-1] if i > 1 else 0: s])
             split_labels.append(labels[splits[i-1] if i > 1 else 0: s])
